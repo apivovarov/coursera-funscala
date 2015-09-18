@@ -270,19 +270,17 @@ object Huffman {
    * sub-trees, think of how to build the code table for the entire tree.
    */
   def convert(tree: CodeTree): CodeTable = {
-    convertInter(tree, -1, Nil, Nil, tree)
+    convertInter(tree, Nil, Nil, tree)
   }
 
-  def convertInter(tree: CodeTree, currBit: Bit, bits: List[Bit], codeTable: CodeTable, treeRoot: CodeTree): CodeTable = {
+  def convertInter(tree: CodeTree, bits: List[Bit], codeTable: CodeTable, treeRoot: CodeTree): CodeTable = {
     tree match {
       case Fork(l, r, ch, w) => {
-        val bits2 = if (currBit > -1) bits :+ currBit else bits
-        val codeTable2 = convertInter(l, 0, bits2, codeTable, treeRoot)
-        convertInter(r, 1, bits2, codeTable2, treeRoot)
+        val codeTable2 = convertInter(l, bits :+ 0, codeTable, treeRoot)
+        convertInter(r, bits :+ 1, codeTable2, treeRoot)
       }
       case Leaf(ch, w) => {
-        val bits2 = bits :+ currBit
-        (ch, bits2) :: codeTable
+        (ch, bits) :: codeTable
       }
     }
   }
