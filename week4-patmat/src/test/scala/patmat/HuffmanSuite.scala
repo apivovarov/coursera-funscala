@@ -1,10 +1,8 @@
 package patmat
 
-import org.scalatest.FunSuite
-
 import org.junit.runner.RunWith
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-
 import patmat.Huffman._
 
 @RunWith(classOf[JUnitRunner])
@@ -51,5 +49,15 @@ class HuffmanSuite extends FunSuite {
 
   test("French encode") {
     assert(encodedBits == secret)
+  }
+
+  test("convert") {
+    val codeTable = convert(frenchCode)
+    val encodedBits = "huffmanestcool".map(x => codeBits(codeTable)(x)).reduce(_ ::: _)
+    assert(encodedBits == secret)
+  }
+
+  test("Quick encode") {
+    assert(quickEncodedBits == secret)
   }
 }
