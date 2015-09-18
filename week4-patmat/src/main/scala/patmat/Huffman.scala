@@ -114,7 +114,7 @@ object Huffman {
       val el2 = trees.tail.head.asInstanceOf[Leaf]
       val ch = chars(el1) ::: chars(el2)
       val w = weight(el1) + weight(el2)
-      val trees2 = trees.tail.tail :+ Fork(el1, el2, ch, w)
+      val trees2 = Fork(el1, el2, ch, w) :: trees.tail.tail
       trees2.sortBy(x => weight(x))
     }
   }
@@ -282,7 +282,7 @@ object Huffman {
       }
       case Leaf(ch, w) => {
         val bits2 = bits :+ currBit
-        codeTable :+(ch, bits2)
+        (ch, bits2) :: codeTable
       }
     }
   }
