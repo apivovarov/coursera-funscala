@@ -39,13 +39,17 @@ class HuffmanSuite extends FunSuite {
     assert(combine(leaflist) === List(Fork(Leaf('e',1),Leaf('t',2),List('e', 't'),3), Leaf('x',4)))
   }
 
-  ignore("decode and encode a very short text should be identity") {
+  test("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
   }
 
-  test("French") {
+  test("French decode") {
     assert(decodedSecret.mkString === "huffmanestcool")
+  }
+
+  test("French encode") {
+    assert(encodedBits == secret)
   }
 }

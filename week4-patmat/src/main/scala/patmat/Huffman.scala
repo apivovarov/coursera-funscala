@@ -1,7 +1,5 @@
 package patmat
 
-import common._
-
 /**
  * Assignment 4: Huffman coding
  *
@@ -215,8 +213,39 @@ object Huffman {
    * This function encodes `text` using the code tree `tree`
    * into a sequence of bits.
    */
-  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+    encodeInter(tree)(text, Nil, -1, tree)
+  }
 
+  def encodeInter(tree: CodeTree)(text: List[Char], accum: List[Bit], currBit: Bit, treeRoot: CodeTree): List[Bit] = {
+    if (text.isEmpty) accum
+    else tree match {
+      case Fork(l, r, ch, w) => {
+        val currCh = text.head
+        if (ch.contains(currCh)) {
+          val accum2 = if (currBit > -1) accum :+ currBit else accum
+          val accum3 = encodeInter(l)(text, accum2, 0, treeRoot)
+          encodeInter(r)(text, accum3, 1, treeRoot)
+        } else {
+          accum
+        }
+      }
+      case Leaf(ch, w) => {
+        val currCh = text.head
+        if (ch == currCh) {
+          val accum2 = if (currBit > -1) accum :+ currBit else accum
+          encodeInter(treeRoot)(text.tail, accum2, -1, treeRoot)
+        } else {
+          accum
+        }
+      }
+    }
+  }
+
+  /**
+   * Write a function that returns the encoded bits
+   */
+  def encodedBits: List[Bit] = encode(frenchCode)("huffmanestcool".toList)
 
   // Part 4b: Encoding using code table
 
