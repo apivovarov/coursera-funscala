@@ -52,7 +52,7 @@ object Anagrams {
    *
    */
   lazy val dictionaryByOccurrences: Map[Occurrences, List[Word]] = {
-    dictionary.groupBy(wordOccurrences)
+    dictionary.groupBy(wordOccurrences).withDefaultValue(List[Word]())
   }
 
   /** Returns all the anagrams of a given word. */
@@ -89,7 +89,7 @@ object Anagrams {
   def cartesian[A](list: List[List[A]]): List[List[A]] = {
     list match {
       case Nil => List(List())
-      case h :: t => h.flatMap( i => cartesian(t).map(i :: _))
+      case h :: t => h.flatMap(i => cartesian(t).map(i :: _))
     }
   }
 
@@ -106,8 +106,23 @@ object Anagrams {
   def subtract(x: Occurrences, y: Occurrences): Occurrences = {
     val map1 = x.toMap
     val map2 = y.toMap
-    val comb = map1 ++ map2.map { case (k, v) => k -> (v - map1.getOrElse(k, 0)) }
+    val comb = map1 ++ map2.map { case (k, v) => k -> (map1.getOrElse(k, 0) - v) }
     comb.filter { case (k, v) => v > 0 }.toList.sortBy(_._1)
+  }
+
+  def subtractNoFilter(x: Occurrences, y: Occurrences): Occurrences = {
+    val map1 = x.toMap
+    val map2 = y.toMap
+    val comb = map1 ++ map2.map { case (k, v) => k -> (map1.getOrElse(k, 0) - v) }
+    comb.toList.sortBy(_._1)
+  }
+
+  def hasNegativeOccur(x: Occurrences): Boolean = {
+    x.exists(_._2 < 0)
+  }
+
+  def filterCntZero(x: Occurrences): Occurrences = {
+    x.filter(_._2 > 0)
   }
 
   /** Returns a list of all anagram sentences of the given sentence.
@@ -150,6 +165,64 @@ object Anagrams {
    *
    *  Note: There is only one anagram of an empty sentence.
    */
-  def sentenceAnagrams(sentence: Sentence): List[Sentence] = ???
+  def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
+    val sentOccur = sentenceOccurrences(sentence)
+
+    val comb = combinations(sentOccur)
+
+    combineCombinations(sentOccur, comb, 1, Nil)
+  }
+
+  def combineCombinations(sentOccur: Occurrences, comb: List[Occurrences], n: Int, accum: List[Sentence]):
+  List[Sentence] = {
+    val a = comb.combinations(n).filter(x => x.reduce(mergeOccurrences(_, _)) == sentOccur).filter(x => !x.isEmpty).toList
+    a match {
+      case Nil => accum
+      case _ => {
+        val words = a.map(x => x.map(occ => dictionaryByOccurrences(occ)))
+        val newSent = words.flatMap(x => cartesian(x))
+        if (n > 1 && newSent.isEmpty) {
+          accum
+        } else {
+          val accum2 = accum ::: newSent
+          combineCombinations(sentOccur, comb, n + 1, accum2)
+        }
+      }
+    }
+  }
+
+  def mergeOccurrences(x: Occurrences, y: Occurrences): Occurrences = {
+    val map1 = x.toMap
+    val map2 = y.toMap
+    val comb = map1 ++ map2.map { case (k, v) => k -> (v + map1.getOrElse(k, 0)) }
+    comb.filter { case (k, v) => v > 0 }.toList.sortBy(_._1)
+  }
+
+  def comb2(sentOccur: Occurrences, comb: List[Occurrences], accum: List[Occurrences], accumLi: List[List[Occurrences]]): List[List[Occurrences]] = {
+    comb match {
+      case Nil => accumLi
+      case currOccur :: t => {
+        val nextOccur = subtractNoFilter(sentOccur, currOccur)
+        val accumLi2 = if (hasNegativeOccur(nextOccur)) {
+          accumLi
+        } else {
+          val accum2 = currOccur :: accum
+          val nextOccurF = nextOccur.filter(_._2 > 0)
+          if (nextOccurF.isEmpty) {
+            // find new anagram
+            accum2 :: accumLi
+          } else {
+            // next word
+            val nextOccurList = combinations(nextOccurF).filter(x => x.nonEmpty)
+            comb2(nextOccurF, nextOccurList, accum2, accumLi)
+          }
+        }
+        comb2(sentOccur, t, accum, accumLi2)
+      }
+    }
+  }
+
+
+
 
 }

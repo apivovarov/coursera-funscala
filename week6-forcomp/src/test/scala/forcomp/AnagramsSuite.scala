@@ -1,11 +1,9 @@
 package forcomp
 
-import org.scalatest.FunSuite
-
+import forcomp.Anagrams._
 import org.junit.runner.RunWith
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-
-import Anagrams._
 
 @RunWith(classOf[JUnitRunner])
 class AnagramsSuite extends FunSuite {
@@ -43,12 +41,18 @@ class AnagramsSuite extends FunSuite {
 
 
   test("subtract: lard - r") {
-    val lard = List(('a', 1), ('d', 1), ('l', 1), ('r', 1))
+    val lard = List(('a', 1), ('d', 1), ('l', 1), ('r', 2))
     val r = List(('r', 1))
-    val lad = List(('a', 1), ('d', 1), ('l', 1))
+    val lad = List(('a', 1), ('d', 1), ('l', 1), ('r', 1))
     assert(subtract(lard, r) === lad)
   }
 
+  test("mergeOccurrences") {
+    val x = List(('a', 1), ('d', 1), ('l', 1), ('r', 1))
+    val y = List(('r', 1), ('v', 2))
+    val exp = List(('a', 1), ('d', 1), ('l', 1), ('r', 2), ('v', 2))
+    assert(mergeOccurrences(x, y) === exp)
+  }
 
 
   test("combinations: []") {
@@ -71,7 +75,11 @@ class AnagramsSuite extends FunSuite {
     assert(combinations(abba).toSet === abbacomb.toSet)
   }
 
-
+  test("sentence anagrams: yes man") {
+    val sentence = List("yes", "man")
+    val anagr = sentenceAnagrams(sentence)
+    anagr.foreach(println)
+  }
 
   test("sentence anagrams: []") {
     val sentence = List()
@@ -103,6 +111,59 @@ class AnagramsSuite extends FunSuite {
       List("Linux", "rulez")
     )
     assert(sentenceAnagrams(sentence).toSet === anas.toSet)
-  }  
+  }
+
+  test("comb2 a3") {
+    val sentOccur = List(('a', 3))
+    val comb = combinations(sentOccur).filter(x => x.nonEmpty)
+    val exp = Set(
+      List(List(('a', 1)), List(('a', 1)), List(('a', 1))),
+      List(List(('a', 1)), List(('a', 2))),
+      List(List(('a', 2)), List(('a', 1))),
+      List(List(('a', 3)))
+    )
+    val ana = comb2(sentOccur, comb, Nil, Nil)
+    println(ana)
+    val anaSet = ana.toSet
+    assert(exp === anaSet)
+  }
+
+  test("comb2 a1 b1") {
+    val sentOccur = List(('a', 2), ('b', 2))
+    val comb = combinations(sentOccur).filter(x => x.nonEmpty)
+    println(comb)
+    val exp = Set(
+      List(List(('a',2), ('b',2))),
+      List(List(('b',1)), List(('a',2), ('b',1))),
+      List(List(('b',2)), List(('a',2))),
+      List(List(('b',1)), List(('b',1)), List(('a',2))),
+      List(List(('a',1)), List(('a',1), ('b',2))),
+      List(List(('a',1), ('b',1)), List(('a',1), ('b',1))),
+      List(List(('b',1)), List(('a',1)), List(('a',1), ('b',1))),
+      List(List(('a',1)), List(('b',1)), List(('a',1), ('b',1))),
+      List(List(('a',1), ('b',2)), List(('a',1))),
+      List(List(('b',1)), List(('a',1), ('b',1)), List(('a',1))),
+      List(List(('b',2)), List(('a',1)), List(('a',1))),
+      List(List(('b',1)), List(('b',1)), List(('a',1)), List(('a',1))),
+      List(List(('a',1)), List(('b',2)), List(('a',1))),
+      List(List(('a',1), ('b',1)), List(('b',1)), List(('a',1))),
+      List(List(('b',1)), List(('a',1)), List(('b',1)), List(('a',1))),
+      List(List(('a',1)), List(('b',1)), List(('b',1)), List(('a',1))),
+      List(List(('a',2)), List(('b',2))),
+      List(List(('a',1)), List(('a',1)), List(('b',2))),
+      List(List(('a',2), ('b',1)), List(('b',1))),
+      List(List(('b',1)), List(('a',2)), List(('b',1))),
+      List(List(('a',1)), List(('a',1), ('b',1)), List(('b',1))),
+      List(List(('a',1), ('b',1)), List(('a',1)), List(('b',1))),
+      List(List(('b',1)), List(('a',1)), List(('a',1)), List(('b',1))),
+      List(List(('a',1)), List(('b',1)), List(('a',1)), List(('b',1))),
+      List(List(('a',2)), List(('b',1)), List(('b',1))),
+      List(List(('a',1)), List(('a',1)), List(('b',1)), List(('b',1)))
+    )
+    val ana = comb2(sentOccur, comb, Nil, Nil)
+    println(ana)
+    val anaSet = ana.toSet
+    assert(exp === anaSet)
+  }
 
 }
