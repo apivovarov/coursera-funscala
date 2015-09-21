@@ -34,7 +34,13 @@ object Anagrams {
   def wordOccurrences(w: Word): Occurrences = w.toLowerCase.groupBy(x => x).mapValues(_.length).toList.sortBy(_._1)
 
   /** Converts a sentence into its character occurrence list. */
-  def sentenceOccurrences(s: Sentence): Occurrences = wordOccurrences(s.reduce(_ + _))
+  def sentenceOccurrences(s: Sentence): Occurrences = {
+    val sent = s match {
+      case Nil => ""
+      case _ => s.reduce(_ + _)
+    }
+    wordOccurrences(sent)
+  }
 
   /** The `dictionaryByOccurrences` is a `Map` from different occurrences to a sequence of all
    *  the words that have that occurrence count.
@@ -167,38 +173,19 @@ object Anagrams {
    */
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
     val sentOccur = sentenceOccurrences(sentence)
-
-    val comb = combinations(sentOccur)
-
-    combineCombinations(sentOccur, comb, 1, Nil)
-  }
-
-  def combineCombinations(sentOccur: Occurrences, comb: List[Occurrences], n: Int, accum: List[Sentence]):
-  List[Sentence] = {
-    val a = comb.combinations(n).filter(x => x.reduce(mergeOccurrences(_, _)) == sentOccur).filter(x => !x.isEmpty).toList
-    a match {
-      case Nil => accum
-      case _ => {
-        val words = a.map(x => x.map(occ => dictionaryByOccurrences(occ)))
-        val newSent = words.flatMap(x => cartesian(x))
-        if (n > 1 && newSent.isEmpty) {
-          accum
-        } else {
-          val accum2 = accum ::: newSent
-          combineCombinations(sentOccur, comb, n + 1, accum2)
-        }
-      }
+    val comb = combinations(sentOccur).filter(x => x.nonEmpty)
+    val combOccur = comb2(sentOccur, comb, Nil, Nil)
+    val w = combOccur.map(x => x.map(occur => dictionaryByOccurrences(occur)))
+    val fullSent = w.filter(s => s.forall(_.length > 0))
+    val res = fullSent.flatMap(s => cartesian(s))
+    res match {
+      case Nil => List(Nil)
+      case _ => res
     }
   }
 
-  def mergeOccurrences(x: Occurrences, y: Occurrences): Occurrences = {
-    val map1 = x.toMap
-    val map2 = y.toMap
-    val comb = map1 ++ map2.map { case (k, v) => k -> (v + map1.getOrElse(k, 0)) }
-    comb.filter { case (k, v) => v > 0 }.toList.sortBy(_._1)
-  }
-
-  def comb2(sentOccur: Occurrences, comb: List[Occurrences], accum: List[Occurrences], accumLi: List[List[Occurrences]]): List[List[Occurrences]] = {
+  def comb2(sentOccur: Occurrences, comb: List[Occurrences], accum: List[Occurrences], accumLi: List[List[Occurrences]]):
+  List[List[Occurrences]] = {
     comb match {
       case Nil => accumLi
       case currOccur :: t => {
@@ -221,8 +208,4 @@ object Anagrams {
       }
     }
   }
-
-
-
-
 }

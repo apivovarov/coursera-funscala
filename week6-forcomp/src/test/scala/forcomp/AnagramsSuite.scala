@@ -47,14 +47,6 @@ class AnagramsSuite extends FunSuite {
     assert(subtract(lard, r) === lad)
   }
 
-  test("mergeOccurrences") {
-    val x = List(('a', 1), ('d', 1), ('l', 1), ('r', 1))
-    val y = List(('r', 1), ('v', 2))
-    val exp = List(('a', 1), ('d', 1), ('l', 1), ('r', 2), ('v', 2))
-    assert(mergeOccurrences(x, y) === exp)
-  }
-
-
   test("combinations: []") {
     assert(combinations(Nil) === List(Nil))
   }
@@ -75,10 +67,32 @@ class AnagramsSuite extends FunSuite {
     assert(combinations(abba).toSet === abbacomb.toSet)
   }
 
-  test("sentence anagrams: yes man") {
-    val sentence = List("yes", "man")
+  test("sentence anagrams: Linux") {
+    val sentence = List("Linux", "rule")
     val anagr = sentenceAnagrams(sentence)
     anagr.foreach(println)
+  }
+
+  test("sentence anagrams: yes man") {
+    val sentence = List("yes", "man")
+    val exp = Set(
+      List("my", "sane"),
+      List("my", "Sean"),
+      List("yes", "man"),
+      List("men", "say"),
+      List("my", "en", "as"),
+      List("en", "my", "as"),
+      List("say", "men"),
+      List("my", "as", "en"),
+      List("as", "my", "en"),
+      List("man", "yes"),
+      List("sane", "my"),
+      List("Sean", "my"),
+      List("en", "as", "my"),
+      List("as", "en", "my")
+    )
+    val anagr = sentenceAnagrams(sentence)
+    assert(exp === anagr.toSet)
   }
 
   test("sentence anagrams: []") {
