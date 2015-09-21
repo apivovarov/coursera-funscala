@@ -67,12 +67,6 @@ class AnagramsSuite extends FunSuite {
     assert(combinations(abba).toSet === abbacomb.toSet)
   }
 
-  test("sentence anagrams: Linux") {
-    val sentence = List("Linux", "rule")
-    val anagr = sentenceAnagrams(sentence)
-    anagr.foreach(println)
-  }
-
   test("sentence anagrams: yes man") {
     val sentence = List("yes", "man")
     val exp = Set(
