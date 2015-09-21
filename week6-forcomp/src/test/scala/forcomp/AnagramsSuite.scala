@@ -129,55 +129,26 @@ class AnagramsSuite extends FunSuite {
 
   test("comb2 a3") {
     val sentOccur = List(('a', 3))
-    val comb = combinations(sentOccur).filter(x => x.nonEmpty)
+    val comb = combinations(sentOccur).filter(x => x.nonEmpty).filter(x => !singleOneChar(x))
     val exp = Set(
-      List(List(('a', 1)), List(('a', 1)), List(('a', 1))),
-      List(List(('a', 1)), List(('a', 2))),
-      List(List(('a', 2)), List(('a', 1))),
       List(List(('a', 3)))
     )
     val ana = comb2(sentOccur, comb, Nil, Nil)
-    println(ana)
     val anaSet = ana.toSet
     assert(exp === anaSet)
   }
 
   test("comb2 a1 b1") {
     val sentOccur = List(('a', 2), ('b', 2))
-    val comb = combinations(sentOccur).filter(x => x.nonEmpty)
-    println(comb)
+    val comb = combinations(sentOccur).filter(x => x.nonEmpty).filter(x => !singleOneChar(x))
     val exp = Set(
-      List(List(('a',2), ('b',2))),
-      List(List(('b',1)), List(('a',2), ('b',1))),
-      List(List(('b',2)), List(('a',2))),
-      List(List(('b',1)), List(('b',1)), List(('a',2))),
-      List(List(('a',1)), List(('a',1), ('b',2))),
-      List(List(('a',1), ('b',1)), List(('a',1), ('b',1))),
-      List(List(('b',1)), List(('a',1)), List(('a',1), ('b',1))),
-      List(List(('a',1)), List(('b',1)), List(('a',1), ('b',1))),
-      List(List(('a',1), ('b',2)), List(('a',1))),
-      List(List(('b',1)), List(('a',1), ('b',1)), List(('a',1))),
-      List(List(('b',2)), List(('a',1)), List(('a',1))),
-      List(List(('b',1)), List(('b',1)), List(('a',1)), List(('a',1))),
-      List(List(('a',1)), List(('b',2)), List(('a',1))),
-      List(List(('a',1), ('b',1)), List(('b',1)), List(('a',1))),
-      List(List(('b',1)), List(('a',1)), List(('b',1)), List(('a',1))),
-      List(List(('a',1)), List(('b',1)), List(('b',1)), List(('a',1))),
-      List(List(('a',2)), List(('b',2))),
-      List(List(('a',1)), List(('a',1)), List(('b',2))),
-      List(List(('a',2), ('b',1)), List(('b',1))),
-      List(List(('b',1)), List(('a',2)), List(('b',1))),
-      List(List(('a',1)), List(('a',1), ('b',1)), List(('b',1))),
-      List(List(('a',1), ('b',1)), List(('a',1)), List(('b',1))),
-      List(List(('b',1)), List(('a',1)), List(('a',1)), List(('b',1))),
-      List(List(('a',1)), List(('b',1)), List(('a',1)), List(('b',1))),
-      List(List(('a',2)), List(('b',1)), List(('b',1))),
-      List(List(('a',1)), List(('a',1)), List(('b',1)), List(('b',1)))
+      List(List(('a', 2), ('b', 2))),
+      List(List(('b', 2)), List(('a', 2))),
+      List(List(('a', 1), ('b', 1)), List(('a', 1), ('b', 1))),
+      List(List(('a', 2)), List(('b', 2)))
     )
     val ana = comb2(sentOccur, comb, Nil, Nil)
-    println(ana)
     val anaSet = ana.toSet
     assert(exp === anaSet)
   }
-
 }

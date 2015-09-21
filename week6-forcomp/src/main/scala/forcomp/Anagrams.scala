@@ -131,6 +131,10 @@ object Anagrams {
     x.filter(_._2 > 0)
   }
 
+  def singleOneChar(x: Occurrences): Boolean = {
+    x.length == 1 && x.head._2 == 1
+  }
+
   /** Returns a list of all anagram sentences of the given sentence.
    *  
    *  An anagram of a sentence is formed by taking the occurrences of all the characters of
@@ -173,7 +177,7 @@ object Anagrams {
    */
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
     val sentOccur = sentenceOccurrences(sentence)
-    val comb = combinations(sentOccur).filter(x => x.nonEmpty)
+    val comb = combinations(sentOccur).filter(x => x.nonEmpty).filter(x => !singleOneChar(x))
     val combOccur = comb2(sentOccur, comb, Nil, Nil)
     val w = combOccur.map(x => x.map(occur => dictionaryByOccurrences(occur)))
     val fullSent = w.filter(s => s.forall(_.length > 0))
@@ -200,7 +204,7 @@ object Anagrams {
             accum2 :: accumLi
           } else {
             // next word
-            val nextOccurList = combinations(nextOccurF).filter(x => x.nonEmpty)
+            val nextOccurList = combinations(nextOccurF).filter(x => x.nonEmpty).filter(x => !singleOneChar(x))
             comb2(nextOccurF, nextOccurList, accum2, accumLi)
           }
         }
