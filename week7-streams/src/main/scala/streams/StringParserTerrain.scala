@@ -1,7 +1,5 @@
 package streams
 
-import common._
-
 /**
  * This component implements a parser to define terrains from a
  * graphical ASCII representation.
@@ -17,7 +15,7 @@ import common._
  *       |------""".stripMargin
  * 
  * - The `-` character denotes parts which are outside the terrain
- * - `o` denotes fields which are part of the terrain
+ * - `o` denotes fields which are part of the terrain``
  * - `S` denotes the start position of the block (which is also considered
      inside the terrain)
  * - `T` denotes the final position of the block (which is also considered
@@ -27,6 +25,8 @@ import common._
  * also the columns that consist of `-` characters only.
  */
 trait StringParserTerrain extends GameDef {
+
+  val terrainChars = Set('o', 'S', 'T')
 
   /**
    * A ASCII representation of the terrain. This field should remain
@@ -52,7 +52,10 @@ trait StringParserTerrain extends GameDef {
    * a valid position (not a '-' character) inside the terrain described
    * by `levelVector`.
    */
-  def terrainFunction(levelVector: Vector[Vector[Char]]): Pos => Boolean = ???
+
+  def terrainFunction(levelVector: Vector[Vector[Char]]): Pos => Boolean = { p =>
+    levelVector.lift(p.row).flatMap(_.lift(p.col)).fold(false)(x => terrainChars.contains(x))
+  }
 
   /**
    * This function should return the position of character `c` in the
@@ -62,7 +65,13 @@ trait StringParserTerrain extends GameDef {
    * Hint: you can use the functions `indexWhere` and / or `indexOf` of the
    * `Vector` class
    */
-  def findChar(c: Char, levelVector: Vector[Vector[Char]]): Pos = ???
+  def findChar(c: Char, levelVector: Vector[Vector[Char]]): Pos = {
+    val rowIdx = levelVector.indexWhere(_.indexOf(c) > -1)
+    val colIdx =
+      if (rowIdx > -1) levelVector(rowIdx).indexOf(c)
+      else -1
+    Pos(rowIdx, colIdx)
+  }
 
   private lazy val vector: Vector[Vector[Char]] =
     Vector(level.split("\n").map(str => Vector(str: _*)): _*)
