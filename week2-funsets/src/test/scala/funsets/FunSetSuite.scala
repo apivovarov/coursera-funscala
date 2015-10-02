@@ -133,29 +133,4 @@ class FunSetSuite extends FunSuite {
       assert(!contains(filter(s1, _ != 1), 1))
     }
   }
-
-  test("forall") {
-    new TestSets {
-      val s = union(s1, s2)
-      assert(forall(s, x => x >= 1 && x <= 2))
-    }
-  }
-
-  test("exists") {
-    new TestSets {
-      val s = union(s1, s2)
-      assert(exists(s, x => x == 2))
-    }
-  }
-
-  test("map") {
-    new TestSets {
-      val s = union(s2, s3)
-      val newSet = map(s, x => x * 2)
-      assert(contains(newSet, 4))
-      assert(contains(newSet, 6))
-      assert(!contains(newSet, 2))
-      assert(!contains(newSet, 3))
-    }
-  }
 }

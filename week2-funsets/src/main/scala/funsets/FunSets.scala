@@ -1,11 +1,11 @@
 package funsets
 
+import common._
+
 /**
  * 2. Purely Functional Sets.
  */
 object FunSets {
-  val minInt = 0
-  val maxInt = 100
   /**
    * We represent a set by its characteristic function, i.e.
    * its `contains` predicate.
@@ -55,40 +55,23 @@ object FunSets {
    */
   def forall(s: Set, p: Int => Boolean): Boolean = {
     def iter(a: Int): Boolean = {
-      if (contains(s, a) && !p(a)) false
-      else if (a == maxInt) true
-      else iter(a + 1)
+      if (???) ???
+      else if (???) ???
+      else iter(???)
     }
-    iter(minInt)
+    iter(???)
   }
 
   /**
    * Returns whether there exists a bounded integer within `s`
    * that satisfies `p`.
    */
-  def exists(s: Set, p: Int => Boolean): Boolean = {
-    def iter(a: Int): Boolean = {
-      if (contains(s, a) && p(a)) true
-      else if (a == maxInt) false
-      else iter(a + 1)
-    }
-    iter(minInt)
-  }
+  def exists(s: Set, p: Int => Boolean): Boolean = ???
 
   /**
    * Returns a set transformed by applying `f` to each element of `s`.
    */
-  def map(s: Set, f: Int => Int): Set = {
-    def iter(a: Int, accum: Set): Set = {
-      val newSet = if (contains(s, a)) {
-        union(accum, singletonSet(f(a)))
-      } else {
-        accum
-      }
-      if (a == maxInt) newSet else iter(a + 1, newSet)
-    }
-    iter(minInt, x => false)
-  }
+  def map(s: Set, f: Int => Int): Set = ???
 
   /**
    * Displays the contents of a set
