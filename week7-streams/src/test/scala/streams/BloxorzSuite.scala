@@ -1,11 +1,8 @@
 package streams
 
-import org.scalatest.FunSuite
-
 import org.junit.runner.RunWith
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-
-import Bloxorz._
 
 @RunWith(classOf[JUnitRunner])
 class BloxorzSuite extends FunSuite {
@@ -23,6 +20,42 @@ class BloxorzSuite extends FunSuite {
         case Up => block.up
         case Down => block.down
       }
+    }
+  }
+
+  trait Level0 extends SolutionChecker {
+    /* terrain for level 0*/
+
+    val level =
+      """ooooooo
+        |oSoooTo
+        |ooooooo
+        |ooooooo""".stripMargin
+
+    val optsolution = List(Right, Right)
+  }
+
+  test("optimal solution for level 0") {
+    new Level0 {
+      assert(solve(solution) == Block(goal, goal))
+    }
+  }
+
+  trait LevelNo extends SolutionChecker {
+    /* terrain for level 0*/
+
+    val level =
+      """Too
+        |oSo
+        |ooo
+        |-o-""".stripMargin
+
+    val optsolution = List()
+  }
+
+  test("optimal solution for level no") {
+    new LevelNo {
+      assert(solution.isEmpty)
     }
   }
 
@@ -53,13 +86,13 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
-  ignore("optimal solution for level 1") {
+  test("optimal solution for level 1") {
     new Level1 {
       assert(solve(solution) == Block(goal, goal))
     }
   }
 
-  ignore("optimal solution length for level 1") {
+  test("optimal solution length for level 1") {
     new Level1 {
       assert(solution.length == optsolution.length)
     }
